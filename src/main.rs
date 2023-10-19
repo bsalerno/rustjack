@@ -1,6 +1,6 @@
 mod cards;
 
-use cards::{Card, Rank, Shoe};
+use cards::{Card, Hand, Rank, Shoe};
 use std::io;
 
 fn main() {
@@ -20,9 +20,9 @@ fn main() {
     player.add_card(shoe.deal().unwrap());
     dealer.add_card(shoe.deal().unwrap());
 
-    println!("Hand: {:?}", player.hand);
+    println!("Hand: {}", player.hand);
     println!("Score: {:?}", player.score());
-    println!("Dealer: {:?}", dealer.hand[0]);
+    println!("Dealer: {}", dealer.hand.cards[0]);
 
     //player's turn
     loop {
@@ -35,7 +35,7 @@ fn main() {
         match input.trim() {
             "h" => {
                 player.add_card(shoe.deal().unwrap());
-                println!("Hand: {:?}", player.hand);
+                println!("Hand: {}", player.hand);
                 println!("Score: {:?}", player.score());
                 if player.score() > 21 {
                     println!("Busted.");
@@ -52,10 +52,10 @@ fn main() {
     }
 
     // dealer's turn
-    println!("Dealer: {:?}", dealer.hand);
+    println!("Dealer: {}", dealer.hand);
     while dealer.score() < 17 {
         dealer.add_card(shoe.deal().unwrap());
-        println!("Dealer: {:?}", dealer.hand);
+        println!("Dealer: {}", dealer.hand);
     }
 
     if dealer.score() > 21 || player.score() > dealer.score() {
@@ -68,22 +68,22 @@ fn main() {
 }
 
 struct Player {
-    hand: Vec<Card>,
+    hand: Hand,
 }
 
 impl Player {
     fn new() -> Self {
-        Player { hand: Vec::new() }
+        Player { hand: Hand::new() }
     }
 
     fn add_card(&mut self, card: Card) {
-        self.hand.push(card);
+        self.hand.cards.push(card);
     }
 
     fn score(&self) -> i32 {
         let mut score = 0;
         let mut aces = 0;
-        for card in &self.hand {
+        for card in &self.hand.cards {
             match card.rank {
                 Rank::Ace => {
                     score += 10;

@@ -1,5 +1,6 @@
 use rand::prelude::*;
 use rand::thread_rng;
+use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Copy, Clone)]
 pub enum Suit {
@@ -7,6 +8,19 @@ pub enum Suit {
     Diamonds,
     Hearts,
     Spades,
+}
+
+impl Display for Suit {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let p = match *self {
+            Suit::Clubs => "♣",
+            Suit::Diamonds => "♦",
+            Suit::Hearts => "♥",
+            Suit::Spades => "♠",
+        };
+
+        write!(f, "{}", p)
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -26,10 +40,56 @@ pub enum Rank {
     King,
 }
 
-#[derive(Debug)]
+impl Display for Rank {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let p = match *self {
+            Rank::Ace => "A",
+            Rank::Two => "2",
+            Rank::Three => "3",
+            Rank::Four => "4",
+            Rank::Five => "5",
+            Rank::Six => "6",
+            Rank::Seven => "7",
+            Rank::Eight => "8",
+            Rank::Nine => "9",
+            Rank::Ten => "T",
+            Rank::Jack => "J",
+            Rank::Queen => "Q",
+            Rank::King => "K",
+        };
+
+        write!(f, "{}", p)
+    }
+}
+
 pub struct Card {
     pub suit: Suit,
     pub rank: Rank,
+}
+
+impl Display for Card {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{}{}", self.rank, self.suit)
+    }
+}
+
+pub struct Hand {
+    pub cards: Vec<Card>,
+}
+
+impl Hand {
+    pub fn new() -> Self {
+        Hand { cards: Vec::new() }
+    }
+}
+
+impl Display for Hand {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        for item in self.cards.iter() {
+            write!(f, "{}", item)?
+        }
+        Ok(())
+    }
 }
 
 struct Deck {
