@@ -1,6 +1,7 @@
 mod cards;
 
 use cards::{Card, Rank, Shoe};
+use std::io;
 
 fn main() {
     println!("yeah buddy");
@@ -22,6 +23,48 @@ fn main() {
     println!("Hand: {:?}", player.hand);
     println!("Score: {:?}", player.score());
     println!("Dealer: {:?}", dealer.hand[0]);
+
+    //player's turn
+    loop {
+        println!("hit (h) or stand (s)?");
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        match input.trim() {
+            "h" => {
+                player.add_card(shoe.deal().unwrap());
+                println!("Hand: {:?}", player.hand);
+                println!("Score: {:?}", player.score());
+                if player.score() > 21 {
+                    println!("Busted.");
+                    return;
+                }
+            }
+            "s" => {
+                break;
+            }
+            _ => {
+                println!("Invalid choice, hit (h) or stand (s).");
+            }
+        }
+    }
+
+    // dealer's turn
+    println!("Dealer: {:?}", dealer.hand);
+    while dealer.score() < 17 {
+        dealer.add_card(shoe.deal().unwrap());
+        println!("Dealer: {:?}", dealer.hand);
+    }
+
+    if dealer.score() > 21 || player.score() > dealer.score() {
+        println!("Player wins!");
+    } else if dealer.score() > player.score() {
+        println!("Dealer wins!");
+    } else {
+        println!("Push!");
+    }
 }
 
 struct Player {
