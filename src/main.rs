@@ -22,6 +22,12 @@ fn main() {
 
     println!("Hand: {}", player.hand);
     println!("Score: {:?}", player.score());
+
+    if player.score() == 21 {
+        println!("Blackjack!");
+        return;
+    }
+
     println!("Dealer: {}", dealer.hand.cards[0]);
 
     //player's turn
@@ -86,7 +92,7 @@ impl Player {
         for card in &self.hand.cards {
             match card.rank {
                 Rank::Ace => {
-                    score += 10;
+                    score += 11;
                     aces += 1;
                 }
                 Rank::Two => {
