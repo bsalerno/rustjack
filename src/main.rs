@@ -13,6 +13,9 @@ fn main() {
     // shuffle the shoe
     shoe.shuffle();
 
-    plusminus += play_hand(shoe);
-    println!("Current +/-: {} units", plusminus);
+    loop {
+        plusminus += play_hand(&mut shoe);
+        println!("Current +/-: {} units", plusminus);
+        println!("--------------------------------------");
+    }
 }

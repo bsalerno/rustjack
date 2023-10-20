@@ -62,7 +62,7 @@ impl Player {
     }
 }
 
-pub fn play_hand(mut shoe: Shoe) -> f32 {
+pub fn play_hand(shoe: &mut Shoe) -> f32 {
     //instantiate players
     let mut player = Player::new();
     let mut dealer = Player::new();
