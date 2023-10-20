@@ -88,15 +88,26 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
     println!("Dealer: {}", dealer.hand.cards[0]);
 
     //player's turn
+    let mut counter: u32 = 1;
     loop {
-        println!("hit (h), stand (s), or double down (d)?");
+        match counter {
+            1 => {
+                println!("hit (h), stand (s), or double down (d)?");
+            }
+            _ => {
+                println!("hit (h) or stand (s)?");
+            }
+        }
         let mut input = String::new();
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
 
-        match input.trim() {
-            "h" => {
+        // construct a tuple for instructions and counter
+        let decision = (input.trim(), counter);
+
+        match decision {
+            ("h", _) => {
                 player.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
                 println!("Score: {:?}", player.score());
@@ -104,8 +115,9 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
                     println!("Busted.");
                     return -1.0;
                 }
+                counter += 1;
             }
-            "d" => {
+            ("d", 1) => {
                 multiplier = 2.0;
                 player.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
@@ -117,10 +129,13 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
                 // you can only get one card when doubling down
                 break;
             }
-            "s" => {
+            ("s", _) => {
                 break;
             }
-            _ => {
+            (_, 1) => {
+                println!("Invalid choice, hit (h), stand (s), or double down (d).");
+            }
+            (_, _) => {
                 println!("Invalid choice, hit (h) or stand (s).");
             }
         }
