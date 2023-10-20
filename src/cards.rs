@@ -157,7 +157,98 @@ mod tests {
     use super::*;
 
     #[test]
-    fn deck_has_52_cards() {
+    fn new_deck_has_52_cards() {
         assert_eq!(Deck::new().cards.len(), 52);
+    }
+
+    #[test]
+    fn new_deck_has_correct_cards() {
+        let deck: Deck = Deck::new();
+
+        // suits
+        let mut clubs = 0;
+        let mut diamonds = 0;
+        let mut hearts = 0;
+        let mut spades = 0;
+
+        // ranks
+        let mut aces = 0;
+        let mut twos = 0;
+        let mut threes = 0;
+        let mut fours = 0;
+        let mut fives = 0;
+        let mut sixes = 0;
+        let mut sevens = 0;
+        let mut eights = 0;
+        let mut nines = 0;
+        let mut tens = 0;
+        let mut jacks = 0;
+        let mut queens = 0;
+        let mut kings = 0;
+
+        for i in deck.cards {
+            match i.suit {
+                Suit::Clubs => clubs += 1,
+                Suit::Diamonds => diamonds += 1,
+                Suit::Hearts => hearts += 1,
+                Suit::Spades => spades += 1,
+            };
+            match i.rank {
+                Rank::Ace => aces += 1,
+                Rank::Two => twos += 1,
+                Rank::Three => threes += 1,
+                Rank::Four => fours += 1,
+                Rank::Five => fives += 1,
+                Rank::Six => sixes += 1,
+                Rank::Seven => sevens += 1,
+                Rank::Eight => eights += 1,
+                Rank::Nine => nines += 1,
+                Rank::Ten => tens += 1,
+                Rank::Jack => jacks += 1,
+                Rank::Queen => queens += 1,
+                Rank::King => kings += 1,
+            };
+        }
+
+        let exp_suit_in_deck: usize = 13;
+        let exp_rank_in_deck: usize = 4;
+        // suits
+        assert_eq!(clubs, exp_suit_in_deck);
+        assert_eq!(diamonds, exp_suit_in_deck);
+        assert_eq!(hearts, exp_suit_in_deck);
+        assert_eq!(spades, exp_suit_in_deck);
+        // ranks
+        assert_eq!(aces, exp_rank_in_deck);
+        assert_eq!(twos, exp_rank_in_deck);
+        assert_eq!(threes, exp_rank_in_deck);
+        assert_eq!(fours, exp_rank_in_deck);
+        assert_eq!(fives, exp_rank_in_deck);
+        assert_eq!(sixes, exp_rank_in_deck);
+        assert_eq!(sevens, exp_rank_in_deck);
+        assert_eq!(eights, exp_rank_in_deck);
+        assert_eq!(nines, exp_rank_in_deck);
+        assert_eq!(tens, exp_rank_in_deck);
+        assert_eq!(jacks, exp_rank_in_deck);
+        assert_eq!(queens, exp_rank_in_deck);
+        assert_eq!(kings, exp_rank_in_deck);
+    }
+
+    #[test]
+    fn new_shoe_has_multiple_of_52() {
+        assert_eq!(Shoe::new(4).cards.len(), 52 * 4);
+    }
+
+    #[test]
+    fn dealing_from_shoe_reduces_cards() {
+        let mut shoe: Shoe = Shoe::new(4);
+
+        let cards_to_deal: usize = 10;
+
+        // example: deal ten cards from shoe
+        for _ in 0..cards_to_deal {
+            shoe.deal();
+        }
+
+        assert_eq!(shoe.cards.len(), (52 * 4) - cards_to_deal);
     }
 }
