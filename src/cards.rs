@@ -86,7 +86,7 @@ impl Hand {
 impl Display for Hand {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         for item in self.cards.iter() {
-            write!(f, "{}", item)?
+            write!(f, "{} ", item)?
         }
         Ok(())
     }
@@ -149,5 +149,15 @@ impl Shoe {
 
     pub fn deal(&mut self) -> Option<Card> {
         self.cards.pop()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deck_has_52_cards() {
+        assert_eq!(Deck::new().cards.len(), 52);
     }
 }
