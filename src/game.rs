@@ -13,53 +13,6 @@ impl Player {
     pub fn add_card(&mut self, card: Card) {
         self.hand.cards.push(card);
     }
-
-    pub fn score(&self) -> i32 {
-        let mut score = 0;
-        let mut aces = 0;
-        for card in &self.hand.cards {
-            match card.rank {
-                Rank::Ace => {
-                    score += 11;
-                    aces += 1;
-                }
-                Rank::Two => {
-                    score += 2;
-                }
-                Rank::Three => {
-                    score += 3;
-                }
-                Rank::Four => {
-                    score += 4;
-                }
-                Rank::Five => {
-                    score += 5;
-                }
-                Rank::Six => {
-                    score += 6;
-                }
-                Rank::Seven => {
-                    score += 7;
-                }
-                Rank::Eight => {
-                    score += 8;
-                }
-                Rank::Nine => {
-                    score += 9;
-                }
-                Rank::Ten | Rank::Jack | Rank::Queen | Rank::King => {
-                    score += 10;
-                }
-            }
-        }
-
-        // if score > 21 and you have an ace, decrement score by 10
-        while score > 21 && aces > 0 {
-            score -= 10;
-            aces -= 1;
-        }
-        score
-    }
 }
 
 pub fn play_hand(shoe: &mut Shoe) -> f32 {
@@ -77,9 +30,9 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
     dealer.add_card(shoe.deal().unwrap());
 
     println!("Hand: {}", player.hand);
-    println!("Score: {:?}", player.score());
+    println!("Score: {:?}", player.hand.score());
 
-    if player.score() == 21 {
+    if player.hand.score() == 21 {
         println!("Blackjack!");
         return 1.5;
     }
@@ -110,8 +63,8 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
             ("h", _) => {
                 player.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
-                println!("Score: {:?}", player.score());
-                if player.score() > 21 {
+                println!("Score: {:?}", player.hand.score());
+                if player.hand.score() > 21 {
                     println!("Busted.");
                     return -1.0;
                 }
@@ -121,8 +74,8 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
                 multiplier = 2.0;
                 player.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
-                println!("Score: {:?}", player.score());
-                if player.score() > 21 {
+                println!("Score: {:?}", player.hand.score());
+                if player.hand.score() > 21 {
                     println!("Busted.");
                     return -2.0;
                 }
@@ -143,16 +96,16 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
 
     // dealer's turn
     println!("Dealer: {}", dealer.hand);
-    while dealer.score() < 17 {
+    while dealer.hand.score() < 17 {
         dealer.add_card(shoe.deal().unwrap());
         println!("Dealer: {}", dealer.hand);
     }
-    println!("Dealer score: {}", dealer.score());
+    println!("Dealer score: {}", dealer.hand.score());
 
-    if dealer.score() > 21 || player.score() > dealer.score() {
+    if dealer.hand.score() > 21 || player.hand.score() > dealer.hand.score() {
         println!("Player wins!");
         return 1.0 * multiplier;
-    } else if dealer.score() > player.score() {
+    } else if dealer.hand.score() > player.hand.score() {
         println!("Dealer wins!");
         return -1.0 * multiplier;
     } else {
