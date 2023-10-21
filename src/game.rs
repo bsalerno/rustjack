@@ -1,4 +1,4 @@
-use crate::cards::{Card, Hand, Rank, Shoe};
+use crate::cards::{Card, Hand, Shoe};
 use std::io;
 
 pub struct Player {
