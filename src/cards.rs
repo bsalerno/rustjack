@@ -132,7 +132,7 @@ pub struct Shoe {
 }
 
 impl Shoe {
-    pub fn new(deck_count: i8) -> Self {
+    pub fn new(deck_count: u8) -> Self {
         let mut cards = Vec::new();
 
         for _ in 0..deck_count {
