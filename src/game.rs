@@ -1,4 +1,4 @@
-use crate::cards::{Card, Hand, Shoe};
+use crate::cards::{Hand, Shoe};
 use std::io;
 
 pub struct Player {
@@ -8,10 +8,6 @@ pub struct Player {
 impl Player {
     pub fn new() -> Self {
         Player { hand: Hand::new() }
-    }
-
-    pub fn add_card(&mut self, card: Card) {
-        self.hand.cards.push(card);
     }
 }
 
@@ -24,10 +20,10 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
     // this will increase to 2 if doubled down
     let mut multiplier: f32 = 1.0;
     // deal initial cards
-    player.add_card(shoe.deal().unwrap());
-    dealer.add_card(shoe.deal().unwrap());
-    player.add_card(shoe.deal().unwrap());
-    dealer.add_card(shoe.deal().unwrap());
+    player.hand.add_card(shoe.deal().unwrap());
+    dealer.hand.add_card(shoe.deal().unwrap());
+    player.hand.add_card(shoe.deal().unwrap());
+    dealer.hand.add_card(shoe.deal().unwrap());
 
     println!("Hand: {}", player.hand);
     println!("Score: {:?}", player.hand.score());
@@ -61,7 +57,7 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
 
         match decision {
             ("h", _) => {
-                player.add_card(shoe.deal().unwrap());
+                player.hand.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
                 println!("Score: {:?}", player.hand.score());
                 if player.hand.score() > 21 {
@@ -72,7 +68,7 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
             }
             ("d", 1) => {
                 multiplier = 2.0;
-                player.add_card(shoe.deal().unwrap());
+                player.hand.add_card(shoe.deal().unwrap());
                 println!("Hand: {}", player.hand);
                 println!("Score: {:?}", player.hand.score());
                 if player.hand.score() > 21 {
@@ -97,7 +93,7 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
     // dealer's turn
     println!("Dealer: {}", dealer.hand);
     while dealer.hand.score() < 17 {
-        dealer.add_card(shoe.deal().unwrap());
+        dealer.hand.add_card(shoe.deal().unwrap());
         println!("Dealer: {}", dealer.hand);
     }
     println!("Dealer score: {}", dealer.hand.score());

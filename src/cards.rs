@@ -82,6 +82,10 @@ impl Hand {
         Hand { cards: Vec::new() }
     }
 
+    pub fn add_card(&mut self, card: Card) {
+        self.cards.push(card);
+    }
+
     pub fn score(&self) -> i32 {
         let mut score = 0;
         let mut aces = 0;
