@@ -23,7 +23,7 @@ impl Display for Suit {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Rank {
     Ace,
     Two,
