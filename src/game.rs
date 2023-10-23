@@ -1,46 +1,34 @@
-use crate::cards::{Card, Hand, Shoe};
+use crate::cards::{Hand, Shoe};
 use std::io;
 
 pub struct Player {
-    pub hand: Hand,
+    pub hands: Vec<Hand>,
 }
 
 impl Player {
     pub fn new() -> Self {
-        Player { hand: Hand::new() }
+        Player {
+            hands: vec![Hand::new()],
+        }
     }
 
-    pub fn add_card(&mut self, card: Card) {
-        self.hand.cards.push(card);
+    pub fn split(&mut self) -> () {
+        let new_hand = Hand {
+            cards: vec![self.hands[0].cards.remove(1)],
+            multiplier: 1.0,
+        };
+
+        self.hands.push(new_hand);
     }
 }
 
-pub fn play_hand(shoe: &mut Shoe) -> f32 {
-    //instantiate players
-    let mut player = Player::new();
-    let mut dealer = Player::new();
-
-    // set initial hand multiplier to 1
-    // this will increase to 2 if doubled down
-    let mut multiplier: f32 = 1.0;
-    // deal initial cards
-    player.add_card(shoe.deal().unwrap());
-    dealer.add_card(shoe.deal().unwrap());
-    player.add_card(shoe.deal().unwrap());
-    dealer.add_card(shoe.deal().unwrap());
-
-    println!("Hand: {}", player.hand);
-    println!("Score: {:?}", player.hand.score());
-
-    if player.hand.score() == 21 {
-        println!("Blackjack!");
-        return 1.5;
-    }
+fn settle_player_hand<'a>(shoe: &'a mut Shoe, player: &'a mut Hand, dealer: &'a mut Hand) -> () {
+    println!("Hand: {}", player);
+    println!("Score: {:?}", player.score());
 
     // print dealer's up card
-    println!("Dealer: {}", dealer.hand.cards[0]);
-
-    //player's turn
+    println!("Dealer: {}", dealer.cards[0]);
+    // player's turn
     let mut counter: u32 = 1;
     loop {
         match counter {
@@ -62,22 +50,20 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
         match decision {
             ("h", _) => {
                 player.add_card(shoe.deal().unwrap());
-                println!("Hand: {}", player.hand);
-                println!("Score: {:?}", player.hand.score());
-                if player.hand.score() > 21 {
-                    println!("Busted.");
-                    return -1.0;
+                println!("Hand: {}", player);
+                println!("Score: {:?}", player.score());
+                if player.score() > 21 {
+                    break;
                 }
                 counter += 1;
             }
             ("d", 1) => {
-                multiplier = 2.0;
+                player.multiplier = 2.0;
                 player.add_card(shoe.deal().unwrap());
-                println!("Hand: {}", player.hand);
-                println!("Score: {:?}", player.hand.score());
-                if player.hand.score() > 21 {
-                    println!("Busted.");
-                    return -2.0;
+                println!("Hand: {}", player);
+                println!("Score: {:?}", player.score());
+                if player.score() > 21 {
+                    break;
                 }
                 // you can only get one card when doubling down
                 break;
@@ -93,23 +79,106 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
             }
         }
     }
+}
 
+fn settle_dealer_hand<'a>(shoe: &'a mut Shoe, dealer: &'a mut Hand) -> () {
     // dealer's turn
-    println!("Dealer: {}", dealer.hand);
-    while dealer.hand.score() < 17 {
+    println!("Dealer: {}", dealer);
+    while dealer.score() < 17 {
         dealer.add_card(shoe.deal().unwrap());
-        println!("Dealer: {}", dealer.hand);
+        println!("Dealer: {}", dealer);
     }
-    println!("Dealer score: {}", dealer.hand.score());
+    println!("Dealer score: {}", dealer.score());
 
-    if dealer.hand.score() > 21 || player.hand.score() > dealer.hand.score() {
-        println!("Player wins!");
-        return 1.0 * multiplier;
-    } else if dealer.hand.score() > player.hand.score() {
-        println!("Dealer wins!");
-        return -1.0 * multiplier;
-    } else {
-        println!("Push!");
+    // dealer
+}
+
+pub fn play_hand(shoe: &mut Shoe) -> f32 {
+    //instantiate players
+    let mut player = Player::new();
+    let mut dealer = Player::new();
+
+    // deal initial cards
+    player.hands[0].add_card(shoe.deal().unwrap());
+    dealer.hands[0].add_card(shoe.deal().unwrap());
+    player.hands[0].add_card(shoe.deal().unwrap());
+    dealer.hands[0].add_card(shoe.deal().unwrap());
+
+    // handle blackjack
+    if player.hands[0].score() == 21 && dealer.hands[0].score() == 21 {
+        println!("Hand: {}", player.hands[0]);
+        println!("Score: {:?}", player.hands[0].score());
+
+        println!("Dealer: {}", dealer.hands[0]);
+        println!("Pushed blackjack!");
         return 0.0;
+    } else if player.hands[0].score() == 21 {
+        println!("Hand: {}", player.hands[0]);
+        println!("Score: {:?}", player.hands[0].score());
+
+        // print dealer's up card
+        println!("Dealer: {}", dealer.hands[0].cards[0]);
+
+        println!("Blackjack!");
+        return 1.5;
     }
+
+    //allow splitting
+    if player.hands[0].can_split() {
+        println!("Hand: {}", player.hands[0]);
+        println!("Score: {:?}", player.hands[0].score());
+
+        // print dealer's up card
+        println!("Dealer: {}", dealer.hands[0].cards[0]);
+
+        println!("Split pair? [y/n]");
+        loop {
+            let mut input = String::new();
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            match input.trim() {
+                "n" => {
+                    break;
+                }
+                "y" => {
+                    player.split();
+                    player.hands[0].add_card(shoe.deal().unwrap());
+                    player.hands[1].add_card(shoe.deal().unwrap());
+                    break;
+                }
+                _ => {
+                    println!("Invalid choice, yes (y) or no (n).")
+                }
+            }
+        }
+    }
+
+    for h in player.hands.iter_mut() {
+        settle_player_hand(shoe, h, &mut dealer.hands[0]);
+    }
+
+    settle_dealer_hand(shoe, &mut dealer.hands[0]);
+
+    let mut winnings: f32 = 0.0;
+    for h in player.hands {
+        if h.score() > 21 {
+            println!("Busted!");
+            println!("Dealer wins!");
+            winnings += -1.0 * h.multiplier;
+        } else if dealer.hands[0].score() > 21 || h.score() > dealer.hands[0].score() {
+            println!("Player wins!");
+            winnings += 1.0 * h.multiplier;
+        } else if dealer.hands[0].score() > h.score() {
+            println!("Dealer wins!");
+            winnings += -1.0 * h.multiplier;
+        } else {
+            println!("Push!");
+            winnings += 0.0;
+        }
+    }
+
+    //return total winnings
+    winnings
 }

@@ -23,7 +23,7 @@ impl Display for Suit {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Rank {
     Ace,
     Two,
@@ -75,11 +75,19 @@ impl Display for Card {
 
 pub struct Hand {
     pub cards: Vec<Card>,
+    pub multiplier: f32,
 }
 
 impl Hand {
     pub fn new() -> Self {
-        Hand { cards: Vec::new() }
+        Hand {
+            cards: Vec::new(),
+            multiplier: 1.0,
+        }
+    }
+
+    pub fn add_card(&mut self, card: Card) {
+        self.cards.push(card);
     }
 
     pub fn score(&self) -> i32 {
@@ -127,6 +135,11 @@ impl Hand {
             aces -= 1;
         }
         score
+    }
+
+    // indicates whether hand is splittable
+    pub fn can_split(&self) -> bool {
+        self.cards[0].rank == self.cards[1].rank
     }
 }
 
