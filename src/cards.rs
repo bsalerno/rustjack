@@ -215,7 +215,7 @@ impl Shoe {
     }
 
     pub fn should_reshuffle(&self, threshold: f32) -> bool {
-        let remaining_pct = self.cards.len() as f32 / (self.deck_count * 52) as f32;
+        let remaining_pct = self.cards.len() as f32 / (i32::from(self.deck_count) * 52) as f32;
 
         if remaining_pct < threshold {
             true
