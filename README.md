@@ -13,8 +13,9 @@ I decided to make a blackjack game since a) it's a simple exercise in object ori
 - ~sessions: just keep playing hands until you say to stop~
   - maybe prompt user every X hands to see if they want to keep playing?
   - ~stats on session: +/- for hands/units~
-  - reshuffle the shoe at a certain point of cards remaining
+  - ~reshuffle the shoe at a certain point of cards remaining~
 - actual game mechanics
-  - splitting
+  - ~splitting~
+  - insurance
 - stats: writing hit/stand decisions to a file for future analysis
 - keeping count: prompt the player at certain intervals to check the count
