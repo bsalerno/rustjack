@@ -18,6 +18,11 @@ fn main() {
     loop {
         plusminus += play_hand(&mut shoe);
         println!("Current +/-: {} units", plusminus);
+        if shoe.should_reshuffle(0.3) {
+            shoe = Shoe::new(args.decks);
+            shoe.shuffle();
+            println!("Reshuffling...");
+        }
         println!("--------------------------------------");
     }
 }
@@ -26,6 +31,6 @@ fn main() {
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// number of decks in the shoe to play with
-    #[arg(short, long, default_value_t = 4)]
+    #[arg(short, long, default_value_t = 8)]
     decks: u8,
 }

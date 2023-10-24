@@ -183,12 +183,14 @@ impl Deck {
             }
         }
 
-        Deck { cards: cards }
+        //using shorthand initialization
+        Deck { cards }
     }
 }
 
 pub struct Shoe {
     cards: Vec<Card>,
+    deck_count: u8,
 }
 
 impl Shoe {
@@ -199,7 +201,8 @@ impl Shoe {
             cards.extend(Deck::new().cards);
         }
 
-        Shoe { cards: cards }
+        // using shorthand initialization
+        Shoe { cards, deck_count }
     }
 
     pub fn shuffle(&mut self) {
@@ -209,6 +212,16 @@ impl Shoe {
 
     pub fn deal(&mut self) -> Option<Card> {
         self.cards.pop()
+    }
+
+    pub fn should_reshuffle(&self, threshold: f32) -> bool {
+        let remaining_pct = self.cards.len() as f32 / (self.deck_count * 52) as f32;
+
+        if remaining_pct < threshold {
+            true
+        } else {
+            false
+        }
     }
 }
 
