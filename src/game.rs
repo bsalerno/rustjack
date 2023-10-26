@@ -1,4 +1,4 @@
-use crate::cards::{Hand, Shoe};
+use crate::cards::{Hand, Rank, Shoe};
 use std::io;
 
 pub struct Player {
@@ -123,6 +123,31 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
         return 1.5;
     }
 
+    // offer insurance
+    let mut insurance: bool = false;
+    if dealer.hands[0].cards[0].rank == Rank::Ace {
+        println!("Insurance? [y/n]");
+        loop {
+            let mut input = String::new();
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            match input.trim() {
+                "n" => {
+                    break;
+                }
+                "y" => {
+                    insurance = true;
+                    break;
+                }
+                _ => {
+                    println!("Invalid choice, yes (y) or no (n).")
+                }
+            }
+        }
+    }
+
     //allow splitting
     if player.hands[0].can_split() {
         println!("Hand: {}", player.hands[0]);
@@ -177,6 +202,17 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
             println!("Push!");
             winnings += 0.0;
         }
+    }
+
+    if insurance
+        && matches!(
+            dealer.hands[0].cards[1].rank,
+            Rank::Ten | Rank::Jack | Rank::Queen | Rank::King
+        )
+    {
+        winnings += 1.0;
+    } else if insurance {
+        winnings -= 1.0;
     }
 
     //return total winnings
