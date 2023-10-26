@@ -126,6 +126,11 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
     // offer insurance
     let mut insurance: bool = false;
     if dealer.hands[0].cards[0].rank == Rank::Ace {
+        println!("Hand: {}", player.hands[0]);
+        println!("Score: {:?}", player.hands[0].score());
+
+        // print dealer's up card
+        println!("Dealer: {}", dealer.hands[0].cards[0]);
         println!("Insurance? [y/n]");
         loop {
             let mut input = String::new();
@@ -210,6 +215,7 @@ pub fn play_hand(shoe: &mut Shoe) -> f32 {
             Rank::Ten | Rank::Jack | Rank::Queen | Rank::King
         )
     {
+        println!("Insurance pays!");
         winnings += 1.0;
     } else if insurance {
         winnings -= 1.0;
